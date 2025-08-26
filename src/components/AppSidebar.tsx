@@ -20,8 +20,14 @@ import {
 
 const menuItems = [
   {
-    title: "Climatización",
+    title: "Home",
     url: "/",
+    icon: Activity,
+    description: "Flujo del sistema"
+  },
+  {
+    title: "Climatización",
+    url: "/climatizacion",
     icon: Thermometer,
     description: "Control de temperatura y aire"
   },

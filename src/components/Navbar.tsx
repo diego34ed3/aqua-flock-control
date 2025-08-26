@@ -37,13 +37,6 @@ export function Navbar({ onMenuClick }: NavbarProps) {
           <Menu className="w-5 h-5" />
         </Button>
         
-        <div className="hidden md:flex items-center gap-2 bg-muted/20 rounded-lg px-3 py-2 min-w-[300px]">
-          <Search className="w-4 h-4 text-muted-foreground" />
-          <Input 
-            placeholder="Buscar en el sistema..."
-            className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-          />
-        </div>
       </div>
 
       {/* Right side */}
@@ -54,7 +47,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
             <Button variant="ghost" size="sm" className="relative">
               <Bell className="w-5 h-5" />
               {notifications.length > 0 && (
-                <Badge className="absolute -top-1 -right-1 w-5 h-5 p-0 text-xs bg-destructive">
+                <Badge className="absolute -top-1 -right-1 w-5 h-5 p-0 text-xs bg-destructive flex items-center justify-center">
                   {notifications.length}
                 </Badge>
               )}

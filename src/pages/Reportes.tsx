@@ -8,10 +8,11 @@ import {
   FileText,
   TrendingUp,
   Database,
-  Clock
+  Clock,
+  Eye
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { generatePDF, generateReportContent } from "@/utils/pdfGenerator";
+import { generatePDF, generateReportContent, viewPDF } from "@/utils/pdfGenerator";
 
 interface Report {
   id: string;
@@ -86,6 +87,29 @@ export default function Reportes() {
       toast({
         title: "Error",
         description: "No se pudo generar el PDF. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleViewReport = async (report: Report) => {
+    try {
+      toast({
+        title: "Abriendo PDF",
+        description: `Preparando vista previa de ${report.name}...`,
+      });
+
+      const content = generateReportContent(report.section);
+      await viewPDF(content, `${report.name.replace(/\s+/g, '_')}.pdf`);
+      
+      toast({
+        title: "PDF Abierto",
+        description: `${report.name} se ha abierto en una nueva ventana.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo abrir el PDF. Inténtalo de nuevo.",
         variant: "destructive",
       });
     }
@@ -208,14 +232,23 @@ export default function Reportes() {
                     PDF Listo
                   </Badge>
 
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDownload(report)}
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Descargar PDF
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleViewReport(report)}
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Ver
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => handleDownload(report)}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Descargar
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}
