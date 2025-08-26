@@ -5,96 +5,90 @@ import { Button } from "@/components/ui/button";
 import { 
   FileBarChart, 
   Download, 
-  Calendar,
   FileText,
   TrendingUp,
   Database,
-  Clock,
-  Filter
+  Clock
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { generatePDF, generateReportContent } from "@/utils/pdfGenerator";
 
 interface Report {
   id: string;
   name: string;
   description: string;
-  type: 'daily' | 'weekly' | 'monthly' | 'custom';
-  size: string;
+  section: 'climatizacion' | 'abastecimiento' | 'movimiento' | 'dispositivos' | 'alertas' | 'general';
   lastGenerated: Date;
-  status: 'ready' | 'generating' | 'error';
 }
 
 export default function Reportes() {
   const { toast } = useToast();
-  const [selectedPeriod, setSelectedPeriod] = useState('week');
   const [reports] = useState<Report[]>([
     {
       id: '1',
-      name: 'Reporte Diario - Climatización',
-      description: 'Resumen completo de temperatura, humedad y calidad del aire',
-      type: 'daily',
-      size: '2.3 MB',
+      name: 'Reporte de Climatización',
+      description: 'Temperatura, humedad y calidad del aire',
+      section: 'climatizacion',
       lastGenerated: new Date(Date.now() - 3600000),
-      status: 'ready'
     },
     {
       id: '2',
-      name: 'Reporte Semanal - Abastecimiento',
-      description: 'Análisis de consumo de agua y alimento durante la semana',
-      type: 'weekly',
-      size: '5.7 MB',
+      name: 'Reporte de Abastecimiento',
+      description: 'Consumo de agua y alimento',
+      section: 'abastecimiento',
       lastGenerated: new Date(Date.now() - 86400000),
-      status: 'ready'
     },
     {
       id: '3',
-      name: 'Reporte Mensual - General',
-      description: 'Informe completo de todos los sistemas y métricas',
-      type: 'monthly',
-      size: '12.4 MB',
-      lastGenerated: new Date(Date.now() - 604800000),
-      status: 'ready'
+      name: 'Reporte de Actividad Animal',
+      description: 'Movimiento y ruido de las aves',
+      section: 'movimiento',
+      lastGenerated: new Date(Date.now() - 7200000),
     },
     {
       id: '4',
+      name: 'Reporte de Dispositivos',
+      description: 'Estado y funcionamiento de sensores',
+      section: 'dispositivos',
+      lastGenerated: new Date(Date.now() - 10800000),
+    },
+    {
+      id: '5',
       name: 'Reporte de Alertas',
-      description: 'Historial de alertas y eventos del sistema',
-      type: 'custom',
-      size: '1.8 MB',
+      description: 'Historial de alertas y eventos',
+      section: 'alertas',
       lastGenerated: new Date(Date.now() - 1800000),
-      status: 'generating'
+    },
+    {
+      id: '6',
+      name: 'Reporte General',
+      description: 'Resumen completo del sistema',
+      section: 'general',
+      lastGenerated: new Date(Date.now() - 14400000),
     }
   ]);
 
-  const handleDownload = (report: Report) => {
-    if (report.status === 'ready') {
+  const handleDownload = async (report: Report) => {
+    try {
       toast({
-        title: "Descarga iniciada",
-        description: `Descargando ${report.name}...`,
+        title: "Generando PDF",
+        description: `Preparando ${report.name}...`,
       });
-      
-      // Simulate download
-      setTimeout(() => {
-        toast({
-          title: "Descarga completada",
-          description: `${report.name} se ha descargado exitosamente.`,
-        });
-      }, 2000);
-    }
-  };
 
-  const generateCustomReport = () => {
-    toast({
-      title: "Generando reporte",
-      description: "Tu reporte personalizado se está generando...",
-    });
-    
-    setTimeout(() => {
+      const content = generateReportContent(report.section);
+      await generatePDF(content, `${report.name.replace(/\s+/g, '_')}.pdf`);
+      
       toast({
-        title: "Reporte generado",
-        description: "Tu reporte personalizado está listo para descargar.",
+        title: "PDF Generado",
+        description: `${report.name} se ha descargado exitosamente.`,
       });
-    }, 5000);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo generar el PDF. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    }
   };
 
   const formatTimeAgo = (timestamp: Date) => {
@@ -110,32 +104,6 @@ export default function Reportes() {
     return 'Hace un momento';
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ready':
-        return 'bg-success/10 text-success';
-      case 'generating':
-        return 'bg-warning/10 text-warning';
-      case 'error':
-        return 'bg-destructive/10 text-destructive';
-      default:
-        return 'bg-muted/10 text-muted-foreground';
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'ready':
-        return 'Listo';
-      case 'generating':
-        return 'Generando...';
-      case 'error':
-        return 'Error';
-      default:
-        return 'Desconocido';
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -146,16 +114,10 @@ export default function Reportes() {
             Genera y descarga informes detallados del sistema
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm">
-            <Calendar className="w-4 h-4 mr-2" />
-            Programar
-          </Button>
-          <Button onClick={generateCustomReport}>
-            <FileText className="w-4 h-4 mr-2" />
-            Reporte Personalizado
-          </Button>
-        </div>
+        <Button onClick={() => handleDownload(reports[5])}>
+          <Download className="w-4 h-4 mr-2" />
+          Descargar Reporte General
+        </Button>
       </div>
 
       {/* Quick Stats */}
@@ -165,7 +127,7 @@ export default function Reportes() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Reportes Disponibles</p>
-                <p className="text-2xl font-bold">{reports.filter(r => r.status === 'ready').length}</p>
+                <p className="text-2xl font-bold">{reports.length}</p>
               </div>
               <FileBarChart className="w-8 h-8 text-primary" />
             </div>
@@ -176,8 +138,8 @@ export default function Reportes() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Tamaño Total</p>
-                <p className="text-2xl font-bold">22.2 MB</p>
+                <p className="text-sm text-muted-foreground">Formato</p>
+                <p className="text-2xl font-bold">PDF</p>
               </div>
               <Database className="w-8 h-8 text-primary" />
             </div>
@@ -189,7 +151,7 @@ export default function Reportes() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Último Reporte</p>
-                <p className="text-sm font-medium">Hace 1 hora</p>
+                <p className="text-sm font-medium">Hace 30 min</p>
               </div>
               <Clock className="w-8 h-8 text-primary" />
             </div>
@@ -200,89 +162,15 @@ export default function Reportes() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Generando</p>
-                <p className="text-2xl font-bold text-warning">{reports.filter(r => r.status === 'generating').length}</p>
+                <p className="text-sm text-muted-foreground">Secciones</p>
+                <p className="text-2xl font-bold">6</p>
               </div>
-              <TrendingUp className="w-8 h-8 text-warning" />
+              <TrendingUp className="w-8 h-8 text-primary" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Quick Generate */}
-      <Card className="bg-gradient-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-primary" />
-            Generar Reporte Rápido
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Period Selection */}
-            <div className="space-y-3">
-              <h4 className="font-medium text-foreground">Período</h4>
-              <div className="space-y-2">
-                {[
-                  { key: 'today', label: 'Hoy' },
-                  { key: 'week', label: 'Última semana' },
-                  { key: 'month', label: 'Último mes' },
-                  { key: 'quarter', label: 'Último trimestre' }
-                ].map(({ key, label }) => (
-                  <Button
-                    key={key}
-                    variant={selectedPeriod === key ? "default" : "outline"}
-                    size="sm"
-                    className="w-full justify-start"
-                    onClick={() => setSelectedPeriod(key)}
-                  >
-                    {label}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {/* Sections */}
-            <div className="space-y-3">
-              <h4 className="font-medium text-foreground">Secciones a Incluir</h4>
-              <div className="space-y-2">
-                {[
-                  'Climatización',
-                  'Abastecimiento', 
-                  'Movimiento',
-                  'Dispositivos',
-                  'Alertas'
-                ].map((section) => (
-                  <label key={section} className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" defaultChecked className="rounded" />
-                    {section}
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Generate Button */}
-            <div className="space-y-3">
-              <h4 className="font-medium text-foreground">Formato</h4>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  {['PDF', 'Excel', 'CSV'].map((format) => (
-                    <label key={format} className="flex items-center gap-2 text-sm">
-                      <input type="radio" name="format" value={format} defaultChecked={format === 'PDF'} />
-                      {format}
-                    </label>
-                  ))}
-                </div>
-                
-                <Button onClick={generateCustomReport} className="w-full">
-                  <Download className="w-4 h-4 mr-2" />
-                  Generar Reporte
-                </Button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Available Reports */}
       <Card className="bg-gradient-card">
@@ -308,29 +196,25 @@ export default function Reportes() {
                     <h4 className="font-medium text-foreground">{report.name}</h4>
                     <p className="text-sm text-muted-foreground mb-2">{report.description}</p>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <span>Tamaño: {report.size}</span>
+                      <span>Formato: PDF</span>
                       <span>•</span>
-                      <span>Generado: {formatTimeAgo(report.lastGenerated)}</span>
+                      <span>Actualizado: {formatTimeAgo(report.lastGenerated)}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Badge 
-                    variant="secondary" 
-                    className={getStatusColor(report.status)}
-                  >
-                    {getStatusText(report.status)}
+                  <Badge variant="secondary" className="bg-success/10 text-success">
+                    PDF Listo
                   </Badge>
 
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleDownload(report)}
-                    disabled={report.status !== 'ready'}
                   >
                     <Download className="w-4 h-4 mr-2" />
-                    Descargar
+                    Descargar PDF
                   </Button>
                 </div>
               </div>
@@ -339,42 +223,6 @@ export default function Reportes() {
         </CardContent>
       </Card>
 
-      {/* Scheduled Reports */}
-      <Card className="bg-gradient-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-primary" />
-            Reportes Programados
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-success/10 rounded-lg">
-              <div>
-                <h4 className="font-medium text-foreground">Reporte Diario Automático</h4>
-                <p className="text-sm text-muted-foreground">Se genera todos los días a las 6:00 AM</p>
-              </div>
-              <Badge className="bg-success/10 text-success">Activo</Badge>
-            </div>
-
-            <div className="flex items-center justify-between p-3 bg-success/10 rounded-lg">
-              <div>
-                <h4 className="font-medium text-foreground">Reporte Semanal</h4>
-                <p className="text-sm text-muted-foreground">Se genera todos los lunes a las 8:00 AM</p>
-              </div>
-              <Badge className="bg-success/10 text-success">Activo</Badge>
-            </div>
-
-            <div className="flex items-center justify-between p-3 bg-muted/10 rounded-lg">
-              <div>
-                <h4 className="font-medium text-foreground">Reporte Mensual</h4>
-                <p className="text-sm text-muted-foreground">Se genera el primer día de cada mes</p>
-              </div>
-              <Badge variant="outline">Pausado</Badge>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

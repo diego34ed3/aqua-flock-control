@@ -3,7 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
+import { Layout } from "@/components/Layout";
+import { TrialModal } from "@/components/TrialModal";
 import Climatizacion from "./pages/Climatizacion";
 import Abastecimiento from "./pages/Abastecimiento";
 import Movimiento from "./pages/Movimiento";
@@ -20,18 +21,18 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Climatizacion />} />
-            <Route path="/abastecimiento" element={<Abastecimiento />} />
-            <Route path="/movimiento" element={<Movimiento />} />
-            <Route path="/dispositivos" element={<Dispositivos />} />
-            <Route path="/alertas" element={<Alertas />} />
-            <Route path="/reportes" element={<Reportes />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Climatizacion />} />
+            <Route path="abastecimiento" element={<Abastecimiento />} />
+            <Route path="movimiento" element={<Movimiento />} />
+            <Route path="dispositivos" element={<Dispositivos />} />
+            <Route path="alertas" element={<Alertas />} />
+            <Route path="reportes" element={<Reportes />} />
             <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
+          </Route>
+        </Routes>
+        <TrialModal />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

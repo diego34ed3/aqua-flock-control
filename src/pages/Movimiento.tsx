@@ -1,361 +1,309 @@
-import { MetricCard } from "@/components/MetricCard";
-import { CircularProgress } from "@/components/CircularProgress";
-import { useRealtimeData } from "@/hooks/useRealtimeData";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   Activity, 
-  MapPin, 
-  Clock,
+  Zap, 
+  AlertTriangle,
+  TrendingUp,
+  Volume2,
+  Target,
+  BarChart3,
   Eye,
-  Zap,
-  TrendingUp
+  Bird
 } from "lucide-react";
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  ScatterChart,
-  Scatter
-} from 'recharts';
-import { useState, useEffect } from "react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, BarChart, Bar } from 'recharts';
 
 export default function Movimiento() {
-  const { motionData } = useRealtimeData();
-  const [activityHistory, setActivityHistory] = useState<any[]>([]);
-  const [detectionZones, setDetectionZones] = useState([
-    { id: 'zona1', name: 'Zona 1 - Entrada', activity: 0, lastDetection: null },
-    { id: 'zona2', name: 'Zona 2 - Alimentación', activity: 0, lastDetection: null },
-    { id: 'zona3', name: 'Zona 3 - Descanso', activity: 0, lastDetection: null },
-    { id: 'zona4', name: 'Zona 4 - Bebederos', activity: 0, lastDetection: null },
-  ]);
+  const [detectionData, setDetectionData] = useState([]);
+  const [noiseData, setNoiseData] = useState([]);
+  const [activityLevel, setActivityLevel] = useState(0);
+  const [noiseLevel, setNoiseLevel] = useState(0);
+  const [currentZone, setCurrentZone] = useState('Galpón 1');
+  const [isRecording, setIsRecording] = useState(true);
 
-  // Generate activity history data
+  // Generate realistic animal movement and noise data
   useEffect(() => {
-    const generateActivityData = () => {
+    const generateData = () => {
       const now = new Date();
-      const data = [];
+      const newMovementData = [];
+      const newNoiseData = [];
       
-      for (let i = 23; i >= 0; i--) {
-        const time = new Date(now.getTime() - i * 3600000); // Hours ago
-        data.push({
-          time: time.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-          actividad: Math.floor(Math.random() * 60) + 20,
-          detecciones: Math.floor(Math.random() * 15) + 5,
-          picos: Math.floor(Math.random() * 8) + 2
+      for (let i = 29; i >= 0; i--) {
+        const time = new Date(now.getTime() - i * 60000);
+        const timeStr = time.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        
+        // Realistic animal movement patterns (smaller variations)
+        const baseMovement = 45 + Math.sin(i * 0.2) * 8; // Base activity around 45%
+        const animalVariation = (Math.random() - 0.5) * 6; // Small realistic variations
+        const movement = Math.max(25, Math.min(75, baseMovement + animalVariation));
+        
+        // Realistic noise levels in dB (chickens produce 60-90 dB)
+        const baseNoise = 72 + Math.sin(i * 0.15) * 12; // Base around 72 dB
+        const noiseVariation = (Math.random() - 0.5) * 8; // Small realistic noise variations
+        const noise = Math.max(55, Math.min(95, baseNoise + noiseVariation));
+        
+        newMovementData.push({
+          time: timeStr,
+          galpon1: Math.round((movement + (Math.random() - 0.5) * 4) * 10) / 10,
+          galpon2: Math.round((movement * 0.9 + (Math.random() - 0.5) * 4) * 10) / 10,
+          galpon3: Math.round((movement * 1.1 + (Math.random() - 0.5) * 4) * 10) / 10,
+          promedio: Math.round(movement * 10) / 10,
+        });
+
+        newNoiseData.push({
+          time: timeStr,
+          galpon1: Math.round((noise + (Math.random() - 0.5) * 3) * 10) / 10,
+          galpon2: Math.round((noise + (Math.random() - 0.5) * 3) * 10) / 10,
+          galpon3: Math.round((noise + (Math.random() - 0.5) * 3) * 10) / 10,
+          promedio: Math.round(noise * 10) / 10,
         });
       }
       
-      return data;
+      setDetectionData(newMovementData);
+      setNoiseData(newNoiseData);
+      setActivityLevel(Math.round(newMovementData[newMovementData.length - 1]?.promedio || 0));
+      setNoiseLevel(Math.round(newNoiseData[newNoiseData.length - 1]?.promedio || 0));
     };
 
-    setActivityHistory(generateActivityData());
-  }, []);
-
-  // Update zones with random activity
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDetectionZones(prev => prev.map(zone => ({
-        ...zone,
-        activity: Math.floor(Math.random() * 100),
-        lastDetection: Math.random() > 0.7 ? new Date() : zone.lastDetection
-      })));
-    }, 3000);
-
+    generateData();
+    const interval = setInterval(generateData, 5000);
     return () => clearInterval(interval);
   }, []);
-
-  const timeSinceLastDetection = motionData.lastDetection 
-    ? Math.floor((new Date().getTime() - motionData.lastDetection.getTime()) / 1000)
-    : 0;
-
-  const getActivityStatus = (activity: number) => {
-    if (activity > 70) return { text: 'Alta', color: 'success' };
-    if (activity > 40) return { text: 'Normal', color: 'info' };
-    if (activity > 20) return { text: 'Baja', color: 'warning' };
-    return { text: 'Muy Baja', color: 'error' };
-  };
-
-  const heatmapData = Array.from({ length: 8 }, (_, i) => 
-    Array.from({ length: 10 }, (_, j) => ({
-      x: j,
-      y: i,
-      intensity: Math.random() * 100
-    }))
-  ).flat();
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Detección de Movimiento</h1>
-          <p className="text-muted-foreground">Monitoreo de actividad y patrones de comportamiento</p>
+          <h1 className="text-3xl font-bold text-foreground">Detección de Actividad Animal</h1>
+          <p className="text-muted-foreground">
+            Monitoreo en tiempo real de movimiento y ruido de las aves
+          </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm">
-            <Eye className="w-4 h-4 mr-2" />
-            Vista en Vivo
-          </Button>
-          <Badge variant="secondary" className="bg-success/10 text-success">
-            <div className="w-2 h-2 rounded-full bg-success mr-2 animate-pulse"></div>
-            Detectando
+          <Badge variant={isRecording ? "default" : "secondary"} className="flex items-center gap-1">
+            <Bird className="w-3 h-3" />
+            {isRecording ? 'Monitoreando' : 'Pausado'}
           </Badge>
+          <Button 
+            variant="outline" 
+            onClick={() => setIsRecording(!isRecording)}
+          >
+            {isRecording ? 'Pausar' : 'Iniciar'}
+          </Button>
         </div>
       </div>
 
-      {/* Main Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MetricCard
-          title="Actividad General"
-          value={motionData.activity.toFixed(0)}
-          unit="%"
-          icon={Activity}
-          status={getActivityStatus(motionData.activity).color as any}
-          trend={{
-            value: 5.2,
-            label: 'última hora',
-            type: 'positive'
-          }}
-        />
+      {/* Real-time Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <Card className="bg-gradient-card">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Actividad Promedio</p>
+                <p className="text-2xl font-bold">{activityLevel}%</p>
+              </div>
+              <Bird className="w-8 h-8 text-primary" />
+            </div>
+          </CardContent>
+        </Card>
 
-        <MetricCard
-          title="Zonas Activas"
-          value={motionData.activeZones}
-          unit={`de 4`}
-          icon={MapPin}
-          status="info"
-        />
+        <Card className="bg-gradient-card">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Nivel de Ruido</p>
+                <p className="text-2xl font-bold">{noiseLevel} dB</p>
+              </div>
+              <Volume2 className="w-8 h-8 text-secondary" />
+            </div>
+          </CardContent>
+        </Card>
 
-        <MetricCard
-          title="Última Detección"
-          value={timeSinceLastDetection < 60 ? `${timeSinceLastDetection}s` : `${Math.floor(timeSinceLastDetection / 60)}m`}
-          unit="atrás"
-          icon={Clock}
-          status={timeSinceLastDetection < 30 ? 'success' : timeSinceLastDetection < 300 ? 'warning' : 'error'}
-        />
+        <Card className="bg-gradient-card">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Zona Más Activa</p>
+                <p className="text-xl font-bold">{currentZone}</p>
+              </div>
+              <Target className="w-8 h-8 text-primary" />
+            </div>
+          </CardContent>
+        </Card>
 
-        <MetricCard
-          title="Promedio por Hora"
-          value="247"
-          unit="detecciones"
-          icon={Zap}
-          status="info"
-          trend={{
-            value: 12.4,
-            label: 'vs ayer',
-            type: 'positive'
-          }}
-        />
+        <Card className="bg-gradient-card">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Estado General</p>
+                <p className="text-sm font-medium text-success">Normal</p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-success" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Activity Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Activity Timeline */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Animal Movement Chart */}
         <Card className="bg-gradient-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-primary" />
-              Actividad por Hora
+              <Bird className="w-5 h-5 text-primary" />
+              Actividad Animal por Galpón
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={activityHistory}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <AreaChart data={detectionData}>
+                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis 
                   dataKey="time" 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
+                  tick={{ fontSize: 12 }}
+                  tickLine={false}
                 />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis 
+                  tick={{ fontSize: 12 }}
+                  tickLine={false}
+                  domain={[20, 80]}
+                  label={{ value: '% Actividad', angle: -90, position: 'insideLeft' }}
+                />
                 <Tooltip 
                   contentStyle={{
                     backgroundColor: 'hsl(var(--card))',
                     border: '1px solid hsl(var(--border))',
                     borderRadius: '8px'
                   }}
+                  formatter={(value) => [`${value}%`, '']}
                 />
                 <Legend />
-                <Area
-                  type="monotone"
-                  dataKey="actividad"
-                  stroke="hsl(var(--primary))"
-                  fill="hsl(var(--primary))"
-                  fillOpacity={0.3}
-                  name="Actividad (%)"
+                <Area 
+                  type="monotone" 
+                  dataKey="galpon1" 
+                  stackId="1"
+                  stroke="hsl(var(--primary))" 
+                  fill="hsl(var(--primary) / 0.2)"
+                  name="Galpón 1"
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="galpon2" 
+                  stackId="2"
+                  stroke="hsl(var(--secondary))" 
+                  fill="hsl(var(--secondary) / 0.2)"
+                  name="Galpón 2"
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="galpon3" 
+                  stackId="3"
+                  stroke="hsl(var(--accent))" 
+                  fill="hsl(var(--accent) / 0.2)"
+                  name="Galpón 3"
                 />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* Detection Heatmap */}
+        {/* Noise Level Chart */}
         <Card className="bg-gradient-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-primary" />
-              Mapa de Calor - Detecciones
+              <Volume2 className="w-5 h-5 text-secondary" />
+              Niveles de Ruido (dB)
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <ScatterChart>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <BarChart data={noiseData.slice(-10)}>
+                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis 
-                  type="number" 
-                  dataKey="x" 
-                  domain={[0, 9]}
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
+                  dataKey="time" 
+                  tick={{ fontSize: 12 }}
+                  tickLine={false}
                 />
                 <YAxis 
-                  type="number" 
-                  dataKey="y" 
-                  domain={[0, 7]}
-                  stroke="hsl(var(--muted-foreground))" 
-                  fontSize={12}
+                  tick={{ fontSize: 12 }}
+                  tickLine={false}
+                  domain={[50, 100]}
+                  label={{ value: 'dB', angle: -90, position: 'insideLeft' }}
                 />
                 <Tooltip 
-                  cursor={{ strokeDasharray: '3 3' }}
                   contentStyle={{
                     backgroundColor: 'hsl(var(--card))',
                     border: '1px solid hsl(var(--border))',
                     borderRadius: '8px'
                   }}
-                  content={({ active, payload }) => {
-                    if (active && payload && payload[0]) {
-                      const data = payload[0].payload;
-                      return (
-                        <div className="bg-card p-2 border border-border rounded-lg">
-                          <p>Intensidad: {data.intensity.toFixed(1)}%</p>
-                          <p>Zona: ({data.x}, {data.y})</p>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
+                  formatter={(value) => [`${value} dB`, '']}
                 />
-                <Scatter 
-                  data={heatmapData} 
-                  fill="hsl(var(--primary))"
-                  fillOpacity={0.6}
+                <Legend />
+                <Bar 
+                  dataKey="galpon1" 
+                  fill="hsl(var(--primary) / 0.7)"
+                  name="Galpón 1"
                 />
-              </ScatterChart>
+                <Bar 
+                  dataKey="galpon2" 
+                  fill="hsl(var(--secondary) / 0.7)"
+                  name="Galpón 2"
+                />
+                <Bar 
+                  dataKey="galpon3" 
+                  fill="hsl(var(--accent) / 0.7)"
+                  name="Galpón 3"
+                />
+              </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
 
-      {/* Detection Zones */}
+      {/* Detection Zones Status */}
       <Card className="bg-gradient-card">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-primary" />
-            Zonas de Detección
+            <BarChart3 className="w-5 h-5 text-primary" />
+            Estado de Zonas de Detección
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {detectionZones.map((zone) => {
-              const status = getActivityStatus(zone.activity);
-              const timeSince = zone.lastDetection 
-                ? Math.floor((new Date().getTime() - zone.lastDetection.getTime()) / 1000)
-                : null;
-
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {['Galpón 1', 'Galpón 2', 'Galpón 3'].map((galpon, index) => {
+              const movement = detectionData[detectionData.length - 1]?.[`galpon${index + 1}`] || 0;
+              const noise = noiseData[noiseData.length - 1]?.[`galpon${index + 1}`] || 0;
+              
               return (
-                <div key={zone.id} className="text-center space-y-4">
-                  <CircularProgress
-                    value={zone.activity}
-                    max={100}
-                    size="lg"
-                    color={status.color === 'success' ? 'success' : 
-                           status.color === 'warning' ? 'warning' : 
-                           status.color === 'error' ? 'error' : 'primary'}
-                    showLabel={true}
-                    label=""
-                    className="mx-auto"
-                  />
-                  
-                  <div>
-                    <h4 className="font-medium text-foreground">{zone.name}</h4>
-                    <Badge 
-                      variant="secondary" 
-                      className={`mt-2 ${
-                        status.color === 'success' ? 'bg-success/10 text-success' :
-                        status.color === 'warning' ? 'bg-warning/10 text-warning' :
-                        status.color === 'error' ? 'bg-destructive/10 text-destructive' :
-                        'bg-primary/10 text-primary'
-                      }`}
-                    >
-                      {status.text}
-                    </Badge>
-                    
-                    {timeSince !== null && (
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Última detección: {timeSince < 60 ? `${timeSince}s` : `${Math.floor(timeSince / 60)}m`}
-                      </p>
-                    )}
+                <div key={galpon} className="p-4 bg-card-header rounded-lg border border-border">
+                  <h4 className="font-medium text-foreground mb-3">{galpon}</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Actividad:</span>
+                      <span className="text-sm font-medium">{movement}%</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Ruido:</span>
+                      <span className="text-sm font-medium">{noise} dB</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Estado:</span>
+                      <Badge 
+                        variant="secondary" 
+                        className={movement > 60 ? "bg-success/10 text-success" : 
+                                  movement > 30 ? "bg-warning/10 text-warning" : 
+                                  "bg-muted/10 text-muted-foreground"}
+                      >
+                        {movement > 60 ? 'Alta' : movement > 30 ? 'Normal' : 'Baja'}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Detection Timeline */}
-      <Card className="bg-gradient-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-primary" />
-            Historial de Detecciones
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={activityHistory}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis 
-                dataKey="time" 
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={12}
-              />
-              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px'
-                }}
-              />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="detecciones"
-                stroke="hsl(var(--primary))"
-                strokeWidth={2}
-                dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 3 }}
-                name="Detecciones por Hora"
-              />
-              <Line
-                type="monotone"
-                dataKey="picos"
-                stroke="hsl(var(--success))"
-                strokeWidth={2}
-                dot={{ fill: 'hsl(var(--success))', strokeWidth: 2, r: 3 }}
-                name="Picos de Actividad"
-              />
-            </LineChart>
-          </ResponsiveContainer>
         </CardContent>
       </Card>
     </div>
