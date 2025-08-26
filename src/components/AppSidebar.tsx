@@ -79,8 +79,8 @@ export function AppSidebar() {
         {/* Logo Section */}
         <div className="p-4 border-b border-sidebar-border">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <Thermometer className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-lg overflow-hidden">
+              <img src="/lovable-uploads/077345b3-0e5c-4960-965c-1fb2cea653a4.png" alt="FarmControl Logo" className="w-full h-full object-contain" />
             </div>
             <div className="group-data-[collapsible=icon]:hidden">
               <h1 className="text-lg font-bold text-sidebar-primary">FarmControl</h1>

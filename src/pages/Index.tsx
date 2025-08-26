@@ -70,40 +70,10 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-secondary/5"></div>
-        <div className="relative max-w-7xl mx-auto px-6 py-24 lg:py-32">
-          <div className="text-center">
-            <h1 className="text-4xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
-              Gestión Agrícola
-              <span className="block text-primary">Inteligente</span>
-            </h1>
-            <p className="text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
-              Optimice sus operaciones agrícolas con nuestra plataforma integral. 
-              Automatización avanzada, monitoreo en tiempo real y análisis predictivo 
-              para maximizar la eficiencia y productividad.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8 py-6">
-                Comenzar Demo
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-6">
-                Ver Características
-              </Button>
-            </div>
-            <p className="text-sm text-muted-foreground mt-6">
-              Sin tarjeta de crédito requerida • Prueba gratuita de 14 días
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Benefits Section */}
-      <section className="py-20 px-6">
+      <section className="py-16 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
               Tecnología que Impulsa el Crecimiento
             </h2>
@@ -113,7 +83,7 @@ export default function Index() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="h-8 w-8 text-primary" />
@@ -146,9 +116,9 @@ export default function Index() {
       </section>
 
       {/* Features Grid */}
-      <section className="py-20 px-6 bg-muted/30">
+      <section className="py-16 px-6 bg-muted/30">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
               Módulos Especializados
             </h2>
@@ -187,34 +157,13 @@ export default function Index() {
                       className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
                       onClick={() => navigate(feature.route)}
                     >
-                      Explorar Módulo
+                      Explorar
                       <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                     </Button>
                   </CardContent>
                 </Card>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-6">
-            Transforme su Operación Agrícola Hoy
-          </h2>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Únase a los agricultores que ya están revolucionando sus cultivos con 
-            tecnología inteligente y automatización avanzada.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8 py-6">
-              Iniciar Prueba Gratuita
-            </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-6">
-              Solicitar Demostración
-            </Button>
           </div>
         </div>
       </section>
