@@ -11,7 +11,7 @@ import {
   Target,
   BarChart3,
   Eye,
-  Bird
+  Egg
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, BarChart, Bar } from 'recharts';
 
@@ -84,7 +84,7 @@ export default function Movimiento() {
         </div>
         <div className="flex items-center gap-3">
           <Badge variant={isRecording ? "default" : "secondary"} className="flex items-center gap-1">
-            <Bird className="w-3 h-3" />
+            <Egg className="w-3 h-3" />
             {isRecording ? 'Monitoreando' : 'Pausado'}
           </Badge>
           <Button 
@@ -105,7 +105,7 @@ export default function Movimiento() {
                 <p className="text-sm text-muted-foreground">Actividad Promedio</p>
                 <p className="text-2xl font-bold">{activityLevel}%</p>
               </div>
-              <Bird className="w-8 h-8 text-primary" />
+              <Egg className="w-8 h-8 text-primary animate-hop" />
             </div>
           </CardContent>
         </Card>
@@ -117,7 +117,7 @@ export default function Movimiento() {
                 <p className="text-sm text-muted-foreground">Nivel de Ruido</p>
                 <p className="text-2xl font-bold">{noiseLevel} dB</p>
               </div>
-              <Volume2 className="w-8 h-8 text-secondary" />
+              <Volume2 className="w-8 h-8 text-secondary animate-scale-pulse" />
             </div>
           </CardContent>
         </Card>
@@ -152,7 +152,7 @@ export default function Movimiento() {
         <Card className="bg-gradient-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Bird className="w-5 h-5 text-primary" />
+              <Egg className="w-5 h-5 text-primary" />
               Actividad Animal por Galpón
             </CardTitle>
           </CardHeader>
@@ -177,7 +177,14 @@ export default function Movimiento() {
                     border: '1px solid hsl(var(--border))',
                     borderRadius: '8px'
                   }}
-                  formatter={(value) => [`${value}%`, '']}
+                  // Limitar siempre a 2 decimales
+                  formatter={(value: number | string, name: string) => {
+                    const num = typeof value === 'number' ? value : parseFloat(value);
+                    if (!isNaN(num)) {
+                      return [num.toFixed(2) + ' %', name];
+                    }
+                    return [value, name];
+                  }}
                 />
                 <Legend />
                 <Area 
@@ -192,8 +199,9 @@ export default function Movimiento() {
                   type="monotone" 
                   dataKey="galpon2" 
                   stackId="2"
-                  stroke="hsl(var(--secondary))" 
-                  fill="hsl(var(--secondary) / 0.2)"
+                  // Updated to a lighter gray for better contrast
+                  stroke="#9CA3AF" 
+                  fill="#9CA3AF33"
                   name="Galpón 2"
                 />
                 <Area 
@@ -213,7 +221,7 @@ export default function Movimiento() {
         <Card className="bg-gradient-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Volume2 className="w-5 h-5 text-secondary" />
+                <Volume2 className="w-5 h-5 text-secondary animate-scale-pulse" />
               Niveles de Ruido (dB)
             </CardTitle>
           </CardHeader>
@@ -238,7 +246,14 @@ export default function Movimiento() {
                     border: '1px solid hsl(var(--border))',
                     borderRadius: '8px'
                   }}
-                  formatter={(value) => [`${value} dB`, '']}
+                  // Limitar siempre a 2 decimales
+                  formatter={(value: number | string, name: string) => {
+                    const num = typeof value === 'number' ? value : parseFloat(value);
+                    if (!isNaN(num)) {
+                      return [num.toFixed(2) + ' dB', name];
+                    }
+                    return [value, name];
+                  }}
                 />
                 <Legend />
                 <Bar 
@@ -248,7 +263,8 @@ export default function Movimiento() {
                 />
                 <Bar 
                   dataKey="galpon2" 
-                  fill="hsl(var(--secondary) / 0.7)"
+                  // Updated to a lighter gray for better contrast
+                  fill="#9CA3AF"
                   name="Galpón 2"
                 />
                 <Bar 

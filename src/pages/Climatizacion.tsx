@@ -152,6 +152,12 @@ export default function Climatizacion() {
                     border: '1px solid hsl(var(--border))',
                     borderRadius: '8px'
                   }}
+                  // Limitar siempre a 2 decimales
+                  formatter={(value: number | string, name: string) => {
+                    const num = typeof value === 'number' ? value : parseFloat(value);
+                    if (!isNaN(num)) return [num.toFixed(2), name];
+                    return [value, name];
+                  }}
                 />
                 <Legend />
                 <Area
@@ -233,6 +239,16 @@ export default function Climatizacion() {
                   backgroundColor: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '8px'
+                }}
+                formatter={(value: number | string, name: string) => {
+                  const num = typeof value === 'number' ? value : parseFloat(value);
+                  if (!isNaN(num)) {
+                    // Añade las unidades basadas en el nombre de la serie
+                    if (name?.toLowerCase().includes('temperatura')) return [num.toFixed(2) + ' °C', name];
+                    if (name?.toLowerCase().includes('humedad')) return [num.toFixed(2) + ' %', name];
+                    return [num.toFixed(2), name];
+                  }
+                  return [value, name];
                 }}
               />
               <Legend />

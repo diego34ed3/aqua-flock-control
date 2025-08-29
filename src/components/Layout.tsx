@@ -5,7 +5,8 @@ import { Navbar } from "@/components/Navbar";
 import { Outlet } from "react-router-dom";
 
 export function Layout() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Iniciar con el sidebar abierto por defecto
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleMenuClick = () => {
     setSidebarOpen(!sidebarOpen);
@@ -16,8 +17,10 @@ export function Layout() {
         <AppSidebar />
         <div className="flex-1 flex flex-col">
           <Navbar onMenuClick={handleMenuClick} />
-          <main className="flex-1 p-6">
-            <Outlet />
+          <main className="flex-1 px-6 py-8">
+            <div className="w-full max-w-7xl mx-auto">
+              <Outlet />
+            </div>
           </main>
         </div>
       </div>

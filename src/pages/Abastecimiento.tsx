@@ -4,23 +4,23 @@ import { useRealtimeData } from "@/hooks/useRealtimeData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  Droplets, 
-  Wheat, 
+import {
+  Droplets,
+  Wheat,
   AlertTriangle,
   TrendingDown,
   TrendingUp,
   RefreshCw
 } from "lucide-react";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
 } from 'recharts';
 
 export default function Abastecimiento() {
@@ -62,7 +62,7 @@ export default function Abastecimiento() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Abastecimiento</h1>
-          <p className="text-muted-foreground">Control de niveles de agua y alimentación</p>
+          <p className="text-muted-foreground"> Control de alimentación vital para su granja</p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" size="sm">
@@ -79,29 +79,29 @@ export default function Abastecimiento() {
       {/* Summary Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard
-          title="Nivel Promedio de Agua"
+          title="Nivel de Agua"
           value={avgWaterLevel.toFixed(1)}
           unit="%"
           icon={Droplets}
           status={getStatusColor(avgWaterLevel)}
-          trend={{
-            value: -2.3,
-            label: 'última hora',
-            type: 'negative'
-          }}
+        // trend={{
+        //   value: -2.3,
+        //   label: 'última hora',
+        //   type: 'negative'
+        // }}
         />
 
         <MetricCard
-          title="Nivel Promedio de Alimento"
+          title="Nivel de Alimento"
           value={avgFeedLevel.toFixed(1)}
           unit="%"
           icon={Wheat}
           status={getStatusColor(avgFeedLevel)}
-          trend={{
-            value: -1.8,
-            label: 'última hora',
-            type: 'negative'
-          }}
+        // trend={{
+        //   value: -1.8,
+        //   label: 'última hora',
+        //   type: 'negative'
+        // }}
         />
 
         <MetricCard
@@ -136,7 +136,7 @@ export default function Abastecimiento() {
               {waterLevels.map((tank) => {
                 const percentage = (tank.value / tank.max) * 100;
                 const status = getLevelStatus(percentage);
-                
+
                 return (
                   <div key={tank.id} className="space-y-3">
                     <div className="flex items-center justify-between">
@@ -146,28 +146,26 @@ export default function Abastecimiento() {
                           {tank.value.toFixed(1)}L de {tank.max}L
                         </p>
                       </div>
-                      <Badge 
-                        variant="secondary" 
-                        className={`${
-                          status.color === 'success' ? 'bg-success/10 text-success' :
-                          status.color === 'warning' ? 'bg-warning/10 text-warning' :
-                          'bg-destructive/10 text-destructive'
-                        }`}
+                      <Badge
+                        variant="secondary"
+                        className={`${status.color === 'success' ? 'bg-success/10 text-success' :
+                            status.color === 'warning' ? 'bg-warning/10 text-warning' :
+                              'bg-destructive/10 text-destructive'
+                          }`}
                       >
                         {status.text}
                       </Badge>
                     </div>
-                    
+
                     <div className="w-full bg-muted rounded-full h-3">
                       <div
-                        className={`h-3 rounded-full transition-all duration-1000 ${
-                          percentage > 70 ? 'bg-success' :
-                          percentage > 30 ? 'bg-warning' : 'bg-destructive'
-                        }`}
+                        className={`h-3 rounded-full transition-all duration-1000 ${percentage > 70 ? 'bg-success' :
+                            percentage > 30 ? 'bg-warning' : 'bg-destructive'
+                          }`}
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
-                    
+
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>0L</span>
                       <span className="font-medium">{percentage.toFixed(1)}%</span>
@@ -200,7 +198,7 @@ export default function Abastecimiento() {
               {feedLevels.map((silo) => {
                 const percentage = (silo.value / silo.max) * 100;
                 const status = getLevelStatus(percentage);
-                
+
                 return (
                   <div key={silo.id} className="space-y-3">
                     <div className="flex items-center justify-between">
@@ -210,28 +208,26 @@ export default function Abastecimiento() {
                           {silo.value.toFixed(1)}kg de {silo.max}kg
                         </p>
                       </div>
-                      <Badge 
-                        variant="secondary" 
-                        className={`${
-                          status.color === 'success' ? 'bg-success/10 text-success' :
-                          status.color === 'warning' ? 'bg-warning/10 text-warning' :
-                          'bg-destructive/10 text-destructive'
-                        }`}
+                      <Badge
+                        variant="secondary"
+                        className={`${status.color === 'success' ? 'bg-success/10 text-success' :
+                            status.color === 'warning' ? 'bg-warning/10 text-warning' :
+                              'bg-destructive/10 text-destructive'
+                          }`}
                       >
                         {status.text}
                       </Badge>
                     </div>
-                    
+
                     <div className="w-full bg-muted rounded-full h-3">
                       <div
-                        className={`h-3 rounded-full transition-all duration-1000 ${
-                          percentage > 70 ? 'bg-success' :
-                          percentage > 30 ? 'bg-warning' : 'bg-destructive'
-                        }`}
+                        className={`h-3 rounded-full transition-all duration-1000 ${percentage > 70 ? 'bg-success' :
+                            percentage > 30 ? 'bg-warning' : 'bg-destructive'
+                          }`}
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
-                    
+
                     <div className="flex justify-between text-sm text-muted-foreground">
                       <span>0kg</span>
                       <span className="font-medium">{percentage.toFixed(1)}%</span>
@@ -264,17 +260,24 @@ export default function Abastecimiento() {
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis 
-                dataKey="name" 
+              <XAxis
+                dataKey="name"
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
               />
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-              <Tooltip 
+              <Tooltip
                 contentStyle={{
                   backgroundColor: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '8px'
+                }}
+                formatter={(value: number | string, name: string) => {
+                  const num = typeof value === 'number' ? value : parseFloat(value);
+                  if (!isNaN(num)) {
+                    return [num.toFixed(2), name];
+                  }
+                  return [value, name];
                 }}
               />
               <Legend />

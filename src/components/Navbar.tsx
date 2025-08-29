@@ -23,14 +23,18 @@ interface NavbarProps {
 }
 
 export function Navbar({ onMenuClick }: NavbarProps) {
+  // Lista de notificaciones (podrías agregar un campo read si luego quieres manejo más granular)
   const [notifications] = useState([
     { id: 1, title: "Temperatura alta en Galpón 3", time: "Hace 5 min", type: "warning" },
     { id: 2, title: "Nivel de agua bajo", time: "Hace 12 min", type: "error" },
     { id: 3, title: "Sistema actualizado", time: "Hace 1 hora", type: "success" },
   ]);
+  // Control del panel de notificaciones y conteo no leÍdo
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState<number>(notifications.length);
 
   return (
-    <nav className="h-16 bg-card border-b border-border flex items-center justify-between px-4">
+    <nav className="h-[77px] bg-card border-b border-border flex items-center justify-between px-4">
       {/* Left side */}
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={onMenuClick}>
@@ -42,13 +46,22 @@ export function Navbar({ onMenuClick }: NavbarProps) {
       {/* Right side */}
       <div className="flex items-center gap-3">
         {/* Notifications */}
-        <Sheet>
+        <Sheet
+          open={isNotificationsOpen}
+          onOpenChange={(open) => {
+            setIsNotificationsOpen(open);
+            if (open) {
+              // Al abrir, marcamos todas como leídas (ocultamos el badge)
+              setUnreadCount(0);
+            }
+          }}
+        >
           <SheetTrigger asChild>
             <Button variant="ghost" size="sm" className="relative">
               <Bell className="w-5 h-5" />
-              {notifications.length > 0 && (
+              {unreadCount > 0 && (
                 <Badge className="absolute -top-1 -right-1 w-5 h-5 p-0 text-xs bg-destructive flex items-center justify-center">
-                  {notifications.length}
+                  {unreadCount}
                 </Badge>
               )}
             </Button>

@@ -1,10 +1,10 @@
-import { 
-  Thermometer, 
-  Droplets, 
-  Activity, 
-  HardDrive, 
-  AlertTriangle, 
-  FileBarChart 
+import {
+  Thermometer,
+  Droplets,
+  Activity,
+  HardDrive,
+  AlertTriangle,
+  FileBarChart
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -17,6 +17,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+
+import logo from "@/assets/logo.png";
 
 const menuItems = [
   {
@@ -32,14 +34,14 @@ const menuItems = [
     description: "Control de temperatura y aire"
   },
   {
-    title: "Abastecimiento", 
+    title: "Abastecimiento",
     url: "/abastecimiento",
     icon: Droplets,
     description: "Agua y alimentación"
   },
   {
     title: "Movimiento",
-    url: "/movimiento", 
+    url: "/movimiento",
     icon: Activity,
     description: "Detectores de actividad"
   },
@@ -69,8 +71,8 @@ export function AppSidebar() {
 
   const isActive = (path: string) => currentPath === path;
   const getNavClasses = ({ isActive }: { isActive: boolean }) =>
-    isActive 
-      ? "bg-sidebar-primary/20 text-sidebar-primary border-r-2 border-sidebar-primary font-medium" 
+    isActive
+      ? "bg-sidebar-primary/20 text-sidebar-primary border-r-2 border-sidebar-primary font-medium"
       : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground";
 
   return (
@@ -79,12 +81,12 @@ export function AppSidebar() {
         {/* Logo Section */}
         <div className="p-4 border-b border-sidebar-border">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg overflow-hidden">
-              <img src="/lovable-uploads/077345b3-0e5c-4960-965c-1fb2cea653a4.png" alt="FarmControl Logo" className="w-full h-full object-contain" />
+            <div className="w-8 h-[44px] rounded-lg overflow-hidden">
+              <img src={logo} alt="FarmSmart Logo" className="w-full h-full object-contain" />
             </div>
             <div className="group-data-[collapsible=icon]:hidden">
-              <h1 className="text-lg font-bold text-sidebar-primary">FarmControl</h1>
-              <p className="text-xs text-sidebar-foreground/70">Sistema de Gestión</p>
+              <h1 className="text-lg font-bold text-sidebar-primary">FarmSmart</h1>
+              <p className="text-xs text-sidebar-foreground/70">Tu Granja Inteligente</p>
             </div>
           </div>
         </div>
@@ -98,13 +100,13 @@ export function AppSidebar() {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild className="h-auto p-0">
-                    <NavLink 
-                      to={item.url} 
-                      end 
-                      className={({ isActive }) => 
+                    <NavLink
+                      to={item.url}
+                      end
+                      className={({ isActive }) =>
                         `flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ${getNavClasses({ isActive })}`
                       }
-                      >
+                    >
                       <item.icon className="w-5 h-5 flex-shrink-0" />
                       <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
                         <p className="font-medium truncate">{item.title}</p>
@@ -121,10 +123,10 @@ export function AppSidebar() {
         {/* Status Indicator */}
         <div className="mt-auto p-4 border-t border-sidebar-border">
           <div className="flex items-center gap-3">
-            <div className="w-3 h-3 rounded-full bg-success animate-pulse-glow"></div>
-            <div className="text-sm group-data-[collapsible=icon]:hidden">
-              <p className="font-medium text-sidebar-foreground">Sistema Activo</p>
-              <p className="text-xs text-sidebar-foreground/70">Todos los sensores operativos</p>
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse-glow"></div>
+            <div className="text-xs group-data-[collapsible=icon]:hidden">
+              <p className="font-xs text-primary">Version 0.7.3 beta</p>
+           
             </div>
           </div>
         </div>

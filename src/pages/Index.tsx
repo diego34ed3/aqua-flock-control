@@ -40,7 +40,7 @@ export default function Index() {
       description: "Monitoreo avanzado de actividad animal y seguridad perimetral",
       details: "Análisis de patrones de movimiento con sensores de ruido y detección de intrusiones",
       route: "/movimiento",
-      color: "text-secondary"
+      color: "text-muted-foreground"
     },
     {
       icon: Settings,
@@ -70,62 +70,12 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      {/* Benefits Section */}
-      <section className="py-16 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Tecnología que Impulsa el Crecimiento
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Nuestra plataforma conecta todos los aspectos de su operación agrícola
-              en un ecosistema inteligente y eficiente.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BarChart3 className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Análisis Predictivo</h3>
-              <p className="text-muted-foreground">
-                Algoritmos avanzados que predicen necesidades y optimizan recursos automáticamente.
-              </p>
-            </div>
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="h-8 w-8 text-accent" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Seguridad Integral</h3>
-              <p className="text-muted-foreground">
-                Protección completa con monitoreo 24/7 y respuesta automática ante amenazas.
-              </p>
-            </div>
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Settings className="h-8 w-8 text-secondary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Automatización Total</h3>
-              <p className="text-muted-foreground">
-                Control automatizado de todos los sistemas para máxima eficiencia operativa.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="py-16 px-6 bg-muted/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Módulos Especializados
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Cada módulo está diseñado para abordar aspectos específicos de la gestión agrícola,
-              trabajando en conjunto para crear un sistema integral.
-            </p>
+     
+          {/* Features Grid */}
+      <section className="py-16">
+        <div>
+          <div className="text-center ">
+          
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -167,6 +117,52 @@ export default function Index() {
           </div>
         </div>
       </section>
+     
+      {/* Benefits Section */}
+      <section className="py-16">
+        <div>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+              Tecnología que Impulsa el Crecimiento
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Nuestra plataforma conecta todos los aspectos de su operación agrícola
+              en un ecosistema inteligente y eficiente.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center p-6">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BarChart3 className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Análisis Predictivo</h3>
+              <p className="text-muted-foreground">
+                Algoritmos avanzados que predicen necesidades y optimizan recursos automáticamente.
+              </p>
+            </div>
+            <div className="text-center p-6">
+              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="h-8 w-8 text-accent" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Seguridad Integral</h3>
+              <p className="text-muted-foreground">
+                Protección completa con monitoreo 24/7 y respuesta automática ante amenazas.
+              </p>
+            </div>
+            <div className="text-center p-6">
+              <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                <Settings className="h-8 w-8 text-muted" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Automatización Total</h3>
+              <p className="text-muted-foreground">
+                Control automatizado de todos los sistemas para máxima eficiencia operativa.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
