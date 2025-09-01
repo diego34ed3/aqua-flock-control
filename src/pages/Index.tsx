@@ -28,7 +28,7 @@ export default function Index() {
     },
     {
       icon: Droplets,
-      title: "Abastecimiento",
+      title: "Abastecido",
       description: "Gestión automatizada de agua y nutrientes para maximizar la eficiencia",
       details: "Sistema de riego inteligente con control de pH, EC y dosificación automática de fertilizantes",
       route: "/abastecimiento",
